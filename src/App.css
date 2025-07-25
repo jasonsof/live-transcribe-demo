@@ -1,0 +1,102 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.recordingButton {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.5),
+    0 -1px 3px rgba(255, 255, 255, 0.915);
+  cursor: pointer;
+  background-color: black;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recordingButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.recordingButton__spinner {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: 3px solid white;
+  border-top: 3px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  z-index: 2;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.recordingButton::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: calc(100% + 16px);
+  height: calc(100% + 16px);
+  border-radius: 50%;
+  pointer-events: none;
+  box-sizing: border-box;
+  border: 4px solid transparent;
+}
+
+.recordingButton--ready::after {
+  border-color: #3b82f6;
+  animation: readyToRecord 1.5s infinite;
+  opacity: 0.2;
+}
+
+.recordingButton--recording::after {
+  border-color: #3bf695;
+  animation: none;
+  opacity: 1;
+}
+
+.recordingButton--error::after {
+  border-color: #ef4444;
+  animation: none;
+  opacity: 1;
+}
+
+@keyframes readyToRecord {
+  0% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
+
+.chunkList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 20vh;
+  overflow-y: auto;
+}
