@@ -72,7 +72,8 @@
 .recordingButton--recording::after {
   border-color: #3bf695;
   animation: none;
-  opacity: 1;
+  opacity: var(--amplitude-opacity, 1);
+  transition: opacity 0.2s ease;
 }
 
 .recordingButton--error::after {

@@ -1,61 +1,57 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import RecordingButton from './components/RecordingButton'
-import OutputFile from './components/OutputFile'
-import { getCurrentTimeString } from './lib/timeHelper'
 import { getAudioRecorder } from './lib/mediaRecorder'
 import './App.css'
 
 function App() {
   const [recorderState, setRecorderState] = useState<'notready' | 'ready' | 'recording'>('notready')
-  const [outputFile, setOutputFile] = useState<File | null>(null)
-
-  const audioChunksRef = useRef<Blob[]>([])
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-  const audioStreamRef = useRef<MediaStream | null>(null)
+  const [amplitude, setAmplitude] = useState(0);
 
   useEffect(() => {
     const setupMediaRecorder = async () => {
-      const { mediaRecorder, audioStream } = await getAudioRecorder()
-      mediaRecorderRef.current = mediaRecorder
-      audioStreamRef.current = audioStream
-      setRecorderState('ready')
+      const { audioStream } = await getAudioRecorder()
 
-      mediaRecorder.ondataavailable = (e) => {
-        audioChunksRef.current.push(e.data)
-      }
+      const audioContext = new AudioContext();
+      // Load the worklet from public folder
+      await audioContext.audioWorklet.addModule('/pcm-processor.js');
 
-      mediaRecorder.onstop = async () => {
-        const fullRecording = new Blob(audioChunksRef.current, { type: 'audio/webm' })
-        const webmFile = new File([fullRecording], `recorded-audio-${getCurrentTimeString()}.webm`, { type: 'audio/webm' })
-        audioChunksRef.current = []
+      // input source
+      const micSource = audioContext.createMediaStreamSource(audioStream);
 
-        setOutputFile(webmFile)
-      }
+      // Create a GainNode to amplify the signal
+      const gainNode = audioContext.createGain();
+      gainNode.gain.value = 4.5; // 2x to 4x is usually safe
+      
+      // custom processor to get the raw samples
+      const workletNode = new AudioWorkletNode(audioContext, 'pcm-processor');
+
+      // Get audio samples from worklet
+      workletNode.port.onmessage = (event) => {
+        const samples = event.data;
+        const rms = Math.sqrt(samples.reduce((sum: number, x: number) => sum + x * x, 0) / samples.length); // root mean squared is a good representation of amplitude or power of a fluctuating signal like audio
+        const clamped = Math.min(1, rms * 5); // Normalize for visual range
+        setAmplitude(clamped);
+      };
+
+      micSource.connect(gainNode).connect(workletNode);
+
+      setRecorderState('recording')
     }
     setupMediaRecorder()
-
-    return () => {
-      audioStreamRef.current?.getTracks().forEach(track => track.stop())
-    }
   }, [])
 
   const toggleRecording = () => {
-    if (!mediaRecorderRef.current) return
-
     if (recorderState === 'ready') {
       setRecorderState('recording')
-      mediaRecorderRef.current.start(1000)
     } else if (recorderState === 'recording') {
       setRecorderState('ready')
-      mediaRecorderRef.current.stop()
     }
   }
 
   return (
     <div className="container">
-      <RecordingButton state={recorderState} onClick={toggleRecording} />
-      <OutputFile file={outputFile} />
+      <RecordingButton state={recorderState} onClick={toggleRecording} amplitude={amplitude} />
     </div>
   )
 }

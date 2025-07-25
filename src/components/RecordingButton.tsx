@@ -2,13 +2,20 @@ type RecordButtonProps = {
   state: string
   loading?: boolean
   onClick: () => void
+  amplitude: number
 }
 
 function RecordButton({
   state,
   loading=false,
-  onClick
+  onClick,
+  amplitude
 }: RecordButtonProps) {
+  const style =
+    state === 'recording'
+      ? { '--amplitude-opacity': Math.max(0.2, amplitude).toString() } as React.CSSProperties
+      : undefined;
+
   let stateClass;
   switch(state) {
     case "recording":
@@ -31,6 +38,7 @@ function RecordButton({
   return (
     <button
       className={`recordingButton ${stateClass}`}
+      style={style}
       onClick={handleClick}
       disabled={loading}
     >
