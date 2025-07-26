@@ -1,37 +1,37 @@
-# 🎙️ Browser Audio Recorder with FFmpeg & Spectrogram
+# 🎙️ Audio Transcribe Demo (with Web Audio API & AudioWorklet)
 
-This prototype demonstrates an in-browser audio recorder that:
-
-- Streams microphone input using the MediaRecorder API
-- Converts the final WebM audio to WAV format using `@ffmpeg/ffmpeg` (WebAssembly)
-- Generates a spectrogram image from the recording using FFmpeg's `showspectrumpic` filter
-- Displays downloadable WAV audio and spectrogram outputs
-
-Built with **React**, **Vite**, **TypeScript**, and **FFmpeg WASM**.
+This is a browser-based prototype that captures live microphone audio using the Web Audio API and streams raw PCM data via an `AudioWorklet`. The goal is to prepare for real-time transcription using a model like Whisper, without relying on `MediaRecorder` or transcoding tools like FFmpeg.
 
 > 🚀 [Live Demo](https://audio-capture-demo.vercel.app/) — *(hosted version)*
 
-## 📸 Preview
+## 🚀 Features
 
-![screenshot](screenshot.png)
+- ✅ Microphone permission and access using `navigator.mediaDevices.getUserMedia`
+- ✅ Modular audio graph with `AudioContext` and `AudioWorkletNode`
+- ✅ Custom AudioWorklet processor that emits raw `Float32Array` PCM buffers
+- ✅ Animated recording button with live amplitude feedback
+- ✅ Clean React-based UI, ready for expansion
 
-| Recording | Output |
-|-----------|--------|
-| 🎤 Live audio recording with preview button | 🎧 WAV audio file + 📊 Spectrogram PNG |
+## 📦 Tech Stack
 
-## 🧠 Why This Exists
+- React
+- TypeScript
+- Web Audio API
+- AudioWorklet
+- Vite (for development)
 
-This was built as a prototype to explore:
-- How to run FFmpeg in the browser
-- Converting and analyzing audio files entirely on the client
-- Working with real-time audio data in chunks
-- A future goal of streaming live audio into a transcription engine like Whisper
+## 🧠 Why use Web Audio API over MediaRecorder?
 
-## 🧪 Running Locally
+- MediaRecorder gives you encoded chunks (e.g. WebM/Opus) — not ideal for live transcription
+- Web Audio API gives **low-level raw PCM** samples
+- No FFmpeg needed — just pure audio data
+- Enables **real-time**, **streamed** transcription workflows
+
+## 🧪 Development
 
 ```bash
-git clone https://github.com/jasonsof/audio-capture-demo.git
-cd audio-capture-demo
+# Install dependencies
 npm install
+
+# Run dev server
 npm run dev
-```
