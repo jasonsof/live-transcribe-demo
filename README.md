@@ -27,11 +27,11 @@ This is a browser-based prototype that captures live microphone audio using the 
 - No FFmpeg needed — just pure audio data
 - Enables **real-time**, **streamed** transcription workflows
 
-## 🧪 Development
+## 🧪 Local Development
+
+This app requires HTTPS locally to support SharedArrayBuffer. To get started:
 
 ```bash
-# Install dependencies
 npm install
-
-# Run dev server
+./setup-dev.sh
 npm run dev
