@@ -27,7 +27,7 @@ export default function useAudioCapture(
       whisperNode.port.onmessage = (e) => {
         const chunk = e.data as Float32Array
         // 🎯 SEND CHUNK TO WHISPER HERE
-        // These are 16kHz, 1s (or whatever you configured) Float32Arrays, ready to go
+        // These are 16kHz, 1s Float32Arrays
         console.log('Chunk ready', chunk.length)
       }
 
