@@ -1,24 +1,23 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import RecordingButton from './components/RecordingButton'
 import useAudioCapture from './hooks/useAudioCapture'
+import useWhisperModel from './hooks/useWhisperModel'
 import './App.css'
 
 function App() {
   const [recorderState, setRecorderState] = useState<'notready' | 'ready' | 'recording'>('notready')
   const { amplitude } = useAudioCapture(recorderState, setRecorderState)
+  const { ready, error } = useWhisperModel()
 
-  const toggleRecording = () => {
-    if (recorderState === 'ready') {
-      setRecorderState('recording')
-    } else if (recorderState === 'recording') {
-      setRecorderState('ready')
-    }
-  }
+  useEffect(() => {
+    console.log("ready =", ready)
+    console.log("error =", error)
+  }, [ready, error])
 
   return (
     <div className="container">
-      <RecordingButton state={recorderState} onClick={toggleRecording} amplitude={amplitude} />
+      <RecordingButton state={recorderState} amplitude={amplitude} />
     </div>
   )
 }
