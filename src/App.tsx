@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 
 import RecordingStatus from './components/RecordingStatus'
+import Transcript from './components/Transcript'
 import useAudioCapture from './hooks/useAudioCapture'
 import useWhisperWorker from './hooks/useWhisperWorker'
 import './App.css'
@@ -41,6 +42,7 @@ function App() {
   return (
     <div className="container">
       <RecordingStatus state={recorderState} amplitude={amplitude} />
+      <Transcript lines={transcriptLines} />
     </div>
   )
 }
