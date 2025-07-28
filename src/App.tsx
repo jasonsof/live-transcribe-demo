@@ -13,6 +13,7 @@ function App() {
   const { ready, transcribe } = useWhisperWorker()
   const transcriptionQueueRef = useRef<Promise<any> | null>(null);
   const lastTranscriptRef = useRef<string>("");
+  const recordingReadyState = !ready ? 'notready' : recorderState;
 
   useEffect(() => {
     if (!latestChunk || !ready) return;
@@ -41,7 +42,7 @@ function App() {
 
   return (
     <div className="container">
-      <RecordingStatus state={recorderState} amplitude={amplitude} />
+      <RecordingStatus state={recordingReadyState} amplitude={amplitude} />
       <Transcript lines={transcriptLines} />
     </div>
   )
