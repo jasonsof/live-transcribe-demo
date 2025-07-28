@@ -3,7 +3,7 @@
 This is a fully client-side prototype that captures live microphone audio, processes it with the Web Audio API, and transcribes it in near real-time using a WebAssembly build of [Whisper](https://github.com/ggerganov/whisper.cpp) — **entirely in the browser**, with **no server-side components or third-party services**.
 
 > 🔒 **Privacy-first**: No audio is ever uploaded — all processing happens locally on your machine.
-> 🚀 [Live Demo](https://audio-capture-demo.vercel.app/) — *(hosted version)*
+> 🚀 [Live Demo](https://whisper-web-transcriber-59it.vercel.app) — *(hosted version)*
 
 ## ✅ Features
 
