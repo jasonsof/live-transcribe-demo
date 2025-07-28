@@ -7,6 +7,7 @@ export default function useAudioCapture(
   setRecorderState: Dispatch<SetStateAction<'notready' | 'ready' | 'recording'>>
 ) {
   const [amplitude, setAmplitude] = useState(0)
+  const [latestChunk, setLatestChunk] = useState<Float32Array | null>(null)
 
   useEffect(() => {
     const setup = async () => {
@@ -26,9 +27,8 @@ export default function useAudioCapture(
 
       whisperNode.port.onmessage = (e) => {
         const chunk = e.data as Float32Array
-        // 🎯 SEND CHUNK TO WHISPER HERE
-        // These are 16kHz, 1s Float32Arrays
-        console.log('Chunk ready', chunk.length)
+        // these are 16kHz, 1s Float32Arrays
+        setLatestChunk(chunk)
       }
 
       // Simple amplitude visualization
@@ -42,7 +42,7 @@ export default function useAudioCapture(
 
       micSource.connect(gainNode);
       gainNode.connect(ampNode);
-      gainNode.connect(whisperNode);
+      micSource.connect(whisperNode);
 
       setRecorderState('recording')
     }
@@ -52,5 +52,11 @@ export default function useAudioCapture(
     }
   }, [recorderState, setRecorderState])
 
-  return { amplitude }
+  function isSilent(chunk: Float32Array, rmsThreshold = 0.002): boolean {
+    const sumSquares = chunk.reduce((sum, value) => sum + value * value, 0);
+    const rms = Math.sqrt(sumSquares / chunk.length);
+    return rms < rmsThreshold;
+  }
+
+  return { amplitude, latestChunk, isSilent }
 }

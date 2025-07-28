@@ -2,13 +2,19 @@ class PCMProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
     this.inputSampleRate = sampleRate;
-    this.targetSampleRate = 16000;
+    this.targetSampleRate = 16000; // Whisper requires 16 kHz mono float32 audio
     this.resampleRatio = this.targetSampleRate / this.inputSampleRate;
 
-    this.windowSize = 16000; // 1 second @ 16kHz
-    this.hopSize = 8000;     // 50% overlap
+    // amount of resampled audio (in samples) to collect before emitting a chunk
+    // at 16kHz, 80000 samples = 5 seconds of audio
+    this.windowSize = 80000;
+
+    // after emitting a chunk, move this many samples forward (hop size)
+    // 16000 = 1 second, so you get 2 seconds of overlap between windows
+    this.hopSize = 80000; // 
 
     this._resampleBuffer = [];
+    this.lastEmit = 0;
   }
 
   process(inputs) {
@@ -54,11 +60,19 @@ class PCMProcessor extends AudioWorkletProcessor {
     return output;
   }
 
+  // only post new chunks once per second
   emitChunksIfReady() {
+    const now = currentTime; // built-in AudioWorkletProcessor time in seconds
+    if (now - this.lastEmit < 1) return; // 1s between emits
+
     while (this._resampleBuffer.length >= this.windowSize) {
       const chunk = this._resampleBuffer.slice(0, this.windowSize);
-      this.port.postMessage(new Float32Array(chunk));
+      const chunkArray = new Float32Array(chunk);
+      this.port.postMessage(chunkArray, [chunkArray.buffer]);
+            
       this._resampleBuffer = this._resampleBuffer.slice(this.hopSize);
+
+      this.lastEmit = now;
     }
   }
 }
