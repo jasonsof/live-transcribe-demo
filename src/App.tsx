@@ -17,7 +17,7 @@ function App() {
 
   return (
     <div className="container">
-      <RecordingButton state={recorderState} amplitude={amplitude} />
+      <RecordingStatus state={recorderState} amplitude={amplitude} />
     </div>
   )
 }

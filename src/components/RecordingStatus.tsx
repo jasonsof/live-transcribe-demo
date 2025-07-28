@@ -1,16 +1,14 @@
-type RecordButtonProps = {
+type RecordingStatusProps = {
   state: string
   loading?: boolean
-  onClick: () => void
   amplitude: number
 }
 
-function RecordButton({
+function RecordingStatus({
   state,
   loading=false,
-  onClick,
   amplitude
-}: RecordButtonProps) {
+}: RecordingStatusProps) {
   const style =
     state === 'recording'
       ? { '--amplitude-opacity': Math.max(0.2, amplitude).toString() } as React.CSSProperties
@@ -29,21 +27,13 @@ function RecordButton({
       break;
   }
 
-  const handleClick = () => {
-    if(state === "notready" || loading) return
-
-    onClick()
-  }
-
   return (
-    <button
+    <div
       className={`recordingButton ${stateClass}`}
       style={style}
-      onClick={handleClick}
-      disabled={loading}
     >
       {loading && <span className="recordingButton__spinner" />}
-    </button>
+    </div>
   )
 }
-export default RecordButton
+export default RecordingStatus
