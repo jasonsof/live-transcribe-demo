@@ -5,6 +5,10 @@ This is a fully client-side prototype that captures live microphone audio, proce
 > 🔒 **Privacy-first**: No audio is ever uploaded — all processing happens locally on your machine.
 > 🚀 [Live Demo](https://whisper-web-transcriber.vercel.app/) — *(hosted version)*
 
+## 📸 Preview
+
+![screenshot](screenshot.png)
+
 ## ✅ Features
 
 - 🎤 Microphone access using `navigator.mediaDevices.getUserMedia`
