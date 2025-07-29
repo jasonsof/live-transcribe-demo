@@ -7,7 +7,7 @@ This is a fully client-side prototype that captures live microphone audio, proce
 
 ## 📸 Preview
 
-![screenshot](screenshot.png)
+![screenshot](Screenshot.png)
 
 ## ✅ Features
 
